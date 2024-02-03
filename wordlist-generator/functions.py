@@ -1,4 +1,3 @@
-import userdata
 import json
 import tkinter.filedialog
 import datetime

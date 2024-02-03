@@ -1,4 +1,5 @@
 from functions import *
+import userdata
 
 class WordListGen:
     def __init__(self):
@@ -7,7 +8,7 @@ class WordListGen:
         modes = ["1","2","3"]
         def mode_input():
             print_break()
-            print("Following are the available commands:\n[1] Create New Wordlist\n[2] Use Existing User Data for Wordlist\n[3]Exit")
+            print("Following are the available commands:\n[1] Create New Wordlist\n[2] Use Existing User Data for Wordlist\n[3] Exit")
             mode = input("Enter command number (The number corresponding to command is to the left of the command) : ")
             if(mode not in modes):
                 print("Invalid mode input. Please try again with a valid input.")
@@ -22,6 +23,8 @@ class WordListGen:
                     user.initialize_user()
                     wordlist = self.wordlist_gen(user.get_user_data(), min, max)
                     self.save_file(wordlist)
+                    print_break()
+                    input("Press any key to continue...")
                     mode_input()
 
                 elif(mode == "2"):
@@ -33,6 +36,8 @@ class WordListGen:
                     print_break()
                     wordlist = self.wordlist_gen(user.get_user_data(), min, max)
                     self.save_file(wordlist)
+                    print_break()
+                    input("Press any key to continue...")
                     mode_input()
 
                 elif(mode == "3"):
@@ -106,6 +111,8 @@ class WordListGen:
         return payloads_combinations_arr
 
     def in_size_words(self, wordlist, min, max):
+        print(min)
+        print(max)
         for word in wordlist:
             if(len(word) < min or len(word) > max):
                 wordlist.remove(word)
