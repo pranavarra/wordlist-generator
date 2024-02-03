@@ -1,7 +1,6 @@
 import datetime
 import json
-
-print("Wordlist Generator!")
+import tkinter.filedialog
 
 numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 characters = ["!", "@", "#", "$", "%", "&"]
@@ -19,6 +18,7 @@ no_key = "N"
 def boolean_check(prompt):
     boolean_input = input(prompt + " [Y/N] ")
     if(boolean_input.upper() != yes_key and boolean_input.upper() != no_key):
+        print_break()
         print("Invalid input. The input must either be a Y for Yes and N for No.")
         boolean_check(prompt)
     if(boolean_input.upper() == "Y"):
@@ -31,12 +31,11 @@ def print_break():
 
 class WordListGen:
     def __init__(self):
-        print("PSYCH GEN!!!")
-        print("\nWelcome to psych generator!!!\n")
         self.user_data = None
         self.types = {"int":12345,"string":"abcdef","bool":True,"list":[],"dict":{}}
         modes = ["1","2","3"]
         def mode_input():
+            print_break()
             print("Following are the available commands:\n[1] Create New Wordlist\n[2] Use Existing User Data for Wordlist\n[3]Exit")
             mode = input("Enter command number (The number corresponding to command is to the left of the command) : ")
             if(mode not in modes):
@@ -50,30 +49,42 @@ class WordListGen:
                     user = UserData()
                     user.initialize_user()
                     wordlist = self.wordlist_gen(user.get_user_data(), min, max)
-                    file_name = input("File Name of the wordlist: ")
-                    self.save_file(file_name, wordlist)
-                    mode_input
+                    self.save_file(wordlist)
+                    mode_input()
+
                 elif(mode == "2"):
-                    print("To be Done")
-                    #CODE HERE
+                    file = tkinter.filedialog.askopenfile(title="Open Existing Data File")
+                    data = self.existing_data(file)
+                    user = UserData(data)
+                    min = self.check_integer("Minimum word length (Default set to 1) : ")
+                    max = self.check_integer("Maximum word length (Default set to 10) : ")
+                    wordlist = self.wordlist_gen(user.get_user_data(), min, max)
+                    self.save_file(wordlist)
+                    mode_input()
+
                 elif(mode == "3"):
                     quit()
 
         mode_input()
+    
+    def existing_data(self, file):
+        data = json.load(file)
+        return data
 
-    def save_file(self, file_name, wordlist):
-        if(file_name == ""):
-            file_name = "Wordlist"
+    def save_file(self, wordlist):
+        print_break()
+        input("Press any key to continue to saving the wordlist in a text file...")
         try:
-            with open(file_name+".txt", "w") as wordlist_file:
-                for word in wordlist:
-                    wordlist_file.write(word+"\n")
-            
-            print("Successfully saved the wordlist to " + file_name + ".txt with " + str(len(wordlist)) + " words.")
+            wordlist_file = tkinter.filedialog.asksaveasfile(title="Save Wordlist File", initialfile="Untitled", defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
+
+            for word in wordlist:
+                wordlist_file.write(word+"\n")
+            print_break()
+            print("Successfully saved the wordlist to " + wordlist_file.name + " with " + str(len(wordlist)) + " words.")
         except:
-            print("Error occurred while trying save the wordlist to " + file_name + ".txt.")
+            print("Error occurred while trying save the wordlist.")
             if(boolean_check("Do you want to try again?")):
-                self.save_file(file_name, wordlist)
+                self.save_file(wordlist)
             else:
                 return
 
@@ -111,7 +122,6 @@ class WordListGen:
                     words_arr.append(words_data[word_one]+words_data[word_two])
         
         words_arr = self.remove_unwanted_data(words_arr)
-        print(words_arr)
         return words_arr
     
     def payload_combinations(self, word_combinations):
@@ -153,9 +163,10 @@ class WordListGen:
                 self.check_integer(prompt, input(prompt))
 
 class UserData:
-    def __init__(self):
+    def __init__(self, data=None):
         self.yes_key = "Y"
         self.no_key = "N"
+        self.data = data
 
     def birthday_check(self):
         bd = input("Birthday (DD/MM/YYYY): ").split("/")
@@ -204,19 +215,6 @@ class UserData:
             return others_data_arr
         else:
             return None
-    
-    def save_json_file(self):
-        if(boolean_check("Do you want to save the data?")):
-            filename = self.data['first_name'] + ".json"
-            try:
-                with open(filename, "w") as json_file:
-                    json.dump(self.data, json_file)
-                print("User data has been successfully saved to " + filename + ".")
-            except:
-                print("Error occurred while trying to save user data to json file.")
-                self.save_json_file()
-        else:
-            return None
 
     def key_relation_data(self, prompt):
         print_break()
@@ -229,6 +227,18 @@ class UserData:
             }
         return data
     
+    def save_json_file(self):
+        if(boolean_check("Do you want to save the data?")):
+            file = tkinter.filedialog.asksaveasfile(title="Save User Data File", initialfile="Untitled.json", defaultextension=".json", filetypes=[("Json Files", "*.json")])
+            try:
+                json.dump(self.data, file)
+                print("User data has been successfully saved to " + file.name + ".")
+            except:
+                print("Error occurred while trying to save user data to json file.")
+                self.save_json_file()
+        else:
+            return None
+
     def new_data(self):
         self.data = {
             'first_name':input("First Name: "),
@@ -242,6 +252,7 @@ class UserData:
         }
 
         self.save_json_file()
+
         return self.data
         
     def initialize_user(self):
