@@ -1,15 +1,5 @@
 from functions import *
 
-numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
-characters = ["!", "@", "#", "$", "%", "&"]
-letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-
-special_payloads = ["123", "00", "11", "!123", "@123", "#123", "&&", "!@#", "321", "@321", "!321", "abc", "xyz", "@abc", "!abc", "@xyz", "!xyz", "$123", "$321"]
-
-payloads = special_payloads + characters + numbers
-
-word_comb_limit = 2
-
 class WordListGen:
     def __init__(self):
         self.user_data = None
@@ -27,6 +17,7 @@ class WordListGen:
                     print_break()
                     min = self.check_integer("Minimum word length (Default set to 1) : ")
                     max = self.check_integer("Maximum word length (Default set to 10) : ")
+                    print_break()
                     user = userdata.UserData()
                     user.initialize_user()
                     wordlist = self.wordlist_gen(user.get_user_data(), min, max)
@@ -39,6 +30,7 @@ class WordListGen:
                     user = userdata.UserData(data)
                     min = self.check_integer("Minimum word length (Default set to 1) : ")
                     max = self.check_integer("Maximum word length (Default set to 10) : ")
+                    print_break()
                     wordlist = self.wordlist_gen(user.get_user_data(), min, max)
                     self.save_file(wordlist)
                     mode_input()
@@ -142,5 +134,3 @@ class WordListGen:
             else:    
                 print("Invalid input. The input must be an integer.")
                 self.check_integer(prompt, input(prompt))
-    
-WordListGen()

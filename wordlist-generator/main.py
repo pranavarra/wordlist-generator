@@ -1,0 +1,3 @@
+import wordlist_generator
+
+wordlist_generator.WordListGen()
