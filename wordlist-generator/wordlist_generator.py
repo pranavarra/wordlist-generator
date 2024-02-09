@@ -16,8 +16,8 @@ class WordListGen:
             else:
                 if(mode == "1"):
                     print_break()
-                    min = self.check_integer("Minimum word length (Default set to 1) : ")
-                    max = self.check_integer("Maximum word length (Default set to 10) : ")
+                    min = self.check_integer("Minimum word length (Default set to 1): ")
+                    max = self.check_integer("Maximum word length (Default set to 10): ")
                     print_break()
                     user = userdata.UserData()
                     user.initialize_user()
@@ -81,6 +81,15 @@ class WordListGen:
                 words_arr.append(str(item))
         
         return words_arr
+    
+    def capitalize_string(self, words_arr):
+        capitalized_arr = words_arr
+        for i in range(int((len(words_arr)/2))+1):
+            start = words_arr[i]
+            end = words_arr[len(words_arr)-1-i]
+            capitalized_arr += [start.capitalize(), start.upper(), start.lower()]
+            capitalized_arr += [end.capitalize(), end.upper(), end.lower()]
+        return capitalized_arr
 
     def remove_unwanted_data(self, data):
         ndata = []
@@ -111,8 +120,6 @@ class WordListGen:
         return payloads_combinations_arr
 
     def in_size_words(self, wordlist, min, max):
-        print(min)
-        print(max)
         for word in wordlist:
             if(len(word) < min or len(word) > max):
                 wordlist.remove(word)
@@ -127,8 +134,8 @@ class WordListGen:
         words_data = self.get_words_from_data(user_data)
         word_combinations = self.word_combinations(words_data)
         payload_combinations = self.payload_combinations(word_combinations)
-        wordlist = self.in_size_words(payload_combinations, min, max)
-
+        capitalized_combinations  = self.capitalize_string(payload_combinations)
+        wordlist = self.in_size_words(capitalized_combinations, min, max)
         return wordlist
 
     def check_integer(self, prompt):
